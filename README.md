@@ -1,14 +1,23 @@
-#CherryStrap
+#KodiDB
 ===========
 
-A rapidly deployable web server based on CherryPy Framework, Mako Templates, and Bootstrap
+A python-based WebApp to view your XBMC/Kodi library, provided you utilize
+a central MySQL database and Thumbnails folder on a server accessible by
+KodiDB. Edit Metadata and run custom scripts on your library (e.g. Playlist generation).
+
+Based on CherryStrap framework.
+
+## Dependencies
+* python 2.7
+* MySQL-python
 
 ## Instructions
-###1) git clone repository onto your server
-###2) cd into CherryStrap root directory
-###3) >> python CherryStrap.py
-###4) Visit http://yo.ur.i.p:7889
-###5) Develop!
+1. git clone repository onto your server
+2. cd into KodiDB root directory
+3. `python KodiDB.py`
+	* Elevated permission required for Port 80
+4. Visit http://yo.ur.i.p:7949
+5. Enter your MySQL credentials and Thumbnails folder in the settings
 
 ## License and Copyright
 
