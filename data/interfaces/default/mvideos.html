@@ -1,0 +1,63 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+<link rel="stylesheet" href="css/data_table.css">
+</%def>
+
+<%def name="body()">
+	<table class="table table-striped" id="mvideo_table">
+		<thead>
+			<tr>
+				<th id="title">Title</th>
+				<th id="artist">Artist</th>
+				<th id="album">Album</th>
+				<th id="year">Year</th>
+
+				
+			</tr>
+		</thead>
+		<tbody>
+		%for mvideo in mvideoInfo:
+			<tr class="gradeZ">
+				<td id="title"><a href="mvideo?mvideoID=${mvideo['mvideoID']}">${mvideo['mvideoTitle']}</a></td>
+				<td id="artist"><a href="mvideoartist?mvideoartistID=${mvideo['mvideoArtistID']}">${mvideo['mvideoArtist']}</a></td>
+				<td id="album">${mvideo['mvideoAlbum']}</td>
+				<td id="year">${mvideo['mvideoYear']}</td>
+			</tr>
+		%endfor		
+		</tbody>
+	</table>
+</%def>
+
+<%def name="javascriptIncludes()">
+	<script src="js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function()
+		{
+			$('#mvideo_table').dataTable(
+				{
+					"aoColumns": [
+						null,
+						null,
+						null,
+						null
+						],
+					"oLanguage": {
+						"sLengthMenu":"Show _MENU_ music videos per page",
+						"sEmptyTable": "No music videos found",
+						"sInfo":"Showing _START_ to _END_ of _TOTAL_ results",
+						"sInfoEmpty":"Showing 0 to 0 of 0 music videos",
+						"sInfoFiltered":"(filtered from _MAX_ total music videos)"},
+					"sPaginationType": "full_numbers",
+					"bStateSave": true,
+					"aLengthMenu": [[5, 10, 15, 25, 50, 100, -1], [5, 10, 15, 25, 50, 100, "All"]],
+					"iDisplayLength": 10,
+			});
+			$('.dataTables_filter input').attr("placeholder", "Search");
+		});
+	</script>
+</%def>

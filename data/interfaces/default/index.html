@@ -1,0 +1,170 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="alert alert-info">
+				<table width="100%"><tr><td>
+				<a href="index?view=played&time=day">Played in Past Day</a><br />
+				<a href="index?view=played&time=week">Played in Past Week</a><br />
+				<a href="index?view=played&time=month">Played in Past Month</a><br />
+				</td>
+				<td align="right" valign="top">
+				<form name="played_date" action="index" method="get">
+				<input type="hidden" name="view" value="played">
+				<input type="text" name="time" id="played_date" placeholder="Played on Date">
+				<input type="submit" value="Go">
+				</form>
+				</td>
+				</tr>
+				</table>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="alert alert-info">
+				<table width="100%"><tr><td>
+				<a href="index?view=added&time=day">Added in Past Day</a><br />
+				<a href="index?view=added&time=week">Added in Past Week</a><br />
+				<a href="index?view=added&time=month">Added in Past Month</a><br />
+				</td>
+				<td align="right" valign="top">
+				<form name="played_date" action="index" method="get">
+				<input type="hidden" name="view" value="added">
+				<input type="text" name="time" id="added_date" placeholder="Added on Date">
+				<input type="submit" value="Go">
+				</form>
+				</td>
+				</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		%if lastSongs:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Music ${viewmode} ${timeframe}</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for song in lastSongs:
+							<tr>
+							<td><a href="album?albumID=${song['albumID']}">
+							<img class="img-thumbnail" src="${song['albumThumb']}" style="width:75px;"></a></td>
+							<td>
+								%if song['songTitle']:
+									${song['songTitle']} by 
+								%endif
+								<a href="artist?artistID=${song['artistID']}">${song['artistName']}<BR>
+								<a href="album?albumID=${song['albumID']}">${song['albumTitle']}</a><BR>
+								%if song['lastPlayed']:
+									${song['lastPlayed']}
+								%elif song['dateAdded']:
+									${song['dateAdded']}
+								%endif
+							</td>
+							</tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+			</div>
+		%endif
+		%if lastEpisodes:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">TV ${viewmode} ${timeframe}</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for episode in lastEpisodes:
+							<tr>
+							<td><a href="episode?episodeID=${episode['episodeID']}"><img class="img-thumbnail" src="${episode['episodeThumb']}" style="width:100px;"><a/></td>
+							<td><a href="tvshow?tvshowID=${episode['episodeShowID']}">${episode['showName']}</a> - <a href="episode?episodeID=${episode['episodeID']}">${episode['episodeTitle']}</a><BR>
+							<a href="tvshow?tvshowID=${episode['episodeShowID']}&seasonID=${episode['episodeSeasonID']}">Season ${episode['episodeSeason']}</a> / <a href="episode?episodeID=${episode['episodeID']}">Episode ${episode['episodeEpisode']}</a><BR>
+							%if episode['lastPlayed']:
+								${episode['lastPlayed']}
+							%elif episode['dateAdded']:
+								${episode['dateAdded']}
+							%endif
+							</td>
+							</tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+			</div>
+		%endif
+		%if lastMovies:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Movies ${viewmode} ${timeframe}</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for movie in lastMovies:
+							<tr>
+							<td><a href="movie?movieID=${movie['movieID']}"><img class="img-thumbnail" src="${movie['moviePoster']}" style="width:75px;"></a></td>
+							<td><a href="movie?movieID=${movie['movieID']}">${movie['movieTitle']}</a><BR>
+								${movie['movieYear']}<BR>
+								%if movie['lastPlayed']:
+									${movie['lastPlayed']}
+								%elif movie['dateAdded']:
+									${movie['dateAdded']}
+								%endif
+							</td>
+							</tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+			</div>
+		%endif
+		%if lastMVideos:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Music Videos ${viewmode} ${timeframe}</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for mvideo in lastMVideos:
+							<tr>
+							<td><a href="mvideo?mvideoID=${mvideo['mvideoID']}"><img class="img-thumbnail" src="${mvideo['mvideoThumb']}" style="width:75px;"></a></td>
+							<td><a href="mvideo?mvideoID=${mvideo['mvideoID']}">${mvideo['mvideoTitle']}</a> by <a href="mvideoartist?mvideoartistID=${mvideo['mvideoArtistID']}">${mvideo['mvideoArtist']}</a><BR>
+								%if mvideo['lastPlayed']:
+									${mvideo['lastPlayed']}
+								%elif mvideo['dateAdded']:
+									${mvideo['dateAdded']}
+								%endif
+							</td>
+							</tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+			</div>
+		%endif
+	</div>
+</%def>
+
+<%def name="javascriptIncludes()">
+  <script>
+  $(function() {
+    $("#played_date").datepicker();
+  });
+  $(function() {
+    $("#added_date").datepicker();
+  });
+  </script>
+</%def>

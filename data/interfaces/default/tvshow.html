@@ -1,0 +1,185 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">
+	%for tvshow in tvshowInfo:
+		<div class="row">
+			<div class="alert alert-info">
+					%if not seasonNumber:
+						<h2 style="display:inline;"><a href="tvshow?tvshowID=${tvshow['tvshowID']}">${tvshow['tvshowTitle']}</a></h2>
+					%else:
+						<h2 style="display:inline;"><a href="tvshow?tvshowID=${tvshow['tvshowID']}">${tvshow['tvshowTitle']}</a> - <a href="tvshow?tvshowID=${tvshow['tvshowID']}&seasonID=${seasonID}">Season ${seasonNumber}</a></h2>
+					%endif
+					<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#updateModal" style="display:inline;">Edit &raquo;</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-9">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Vitals</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						%if not seasonPoster:
+							<tr><td rowspan="7" width="280px"><img class="img-thumbnail" src="${tvshow['tvshowPoster']}"></td></tr>
+						%else:
+							<tr><td rowspan="7" width="280px"><img class="img-thumbnail" src="${seasonPoster}"></td></tr>
+						%endif:
+						<h4>
+						<tr><td colspan="2"><img class="img-thumbnail" src="${tvshow['tvshowBanner']}"></td></tr>
+						<tr><td>First Aired:</td><td>${tvshow['tvshowFirstAired']}</td></tr>
+						<tr><td>Genre:</td><td>${tvshow['tvshowGenre']}</td></tr>
+						<tr><td>Rated:</td><td>${tvshow['tvshowRated']}</td></tr>
+						<tr><td>Network:</td><td>${tvshow['tvshowNetwork']}</td></tr>
+						<tr><td>Rating:</td><td>${tvshow['tvshowRating']}</td></tr>
+						</h4>
+					</table>
+					<table class="table table-striped">
+						<tr><td>Summary:</td><td>${tvshow['tvshowSummary']}</td></tr>
+						<tr><td>Path:</td><td>${tvshow['tvshowPath']}</td></tr>
+					</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Fanart</h3>
+					</div>
+					<div class="panel-body">
+						<img class="img-thumbnail" src="${tvshow['tvshowFan']}">
+					</div>
+				</div>
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Play</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						%if not seasonEpisodes:
+							<tr><td>Total Episodes:</td><td>${tvshow['tvshowTotalCount']}</td></tr>
+						%else:
+							<tr><td>Total Episodes:</td><td>${seasonEpisodes}</td></tr>
+						%endif
+						%if not seasonPlayCount:
+							<tr><td>Watched Episodes:</td><td>${tvshow['tvshowWatchedCount']}</td></tr>
+						%else:
+							<tr><td>Watched Episodes:</td><td>${seasonPlayCount}</td></tr>
+						%endif
+						<tr><td>Last Played:</td><td>${tvshow['tvshowLastPlayed']}</td></tr>
+						<tr><td>Date Added:</td><td>${tvshow['tvshowDateAdded']}</td></tr>
+					</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		%if not seasonID:
+			<div class="row">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Seasons</h3>
+					</div>
+					<div class="panel-body">
+						%for season in seasonList:
+							<a href="tvshow?tvshowID=${tvshow['tvshowID']}&seasonID=${season['seasonID']}"><img class="img-thumbnail" style="height:175px;" src="${season['seasonPoster']}" alt="[${season['seasonNumber']}] ${season['seasonNumber']}"></a>
+						%endfor
+					</div>
+				</div>
+			</div>
+		%else:
+			<div class="row">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Episodes</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for episode in episodeList:
+							<tr><td rowspan="3" width="280px"><a href="episode?episodeID=${episode['episodeID']}"><img class="img-thumbnail" src="${episode['episodeThumb']}" alt="[${episode['episodeNumber']}] ${episode['episodeNumber']}"></a></td></tr>
+							<tr><td>Episode ${episode['episodeNumber']}<BR><a href="episode?episodeID=${episode['episodeID']}">${episode['episodeTitle']}</a></td>
+							<td>Air Date:<BR>${episode['episodeAirDate']}</td>
+							<td>Rating:<BR>${episode['episodeRating']}</td></tr>
+							</tr><td colspan="3">${episode['episodePlot']}</td></tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+			</div>
+		%endif
+
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Update TV Show Information: ${tvshow['tvshowTitle']}</h4>
+					</div>
+					<div class="modal-body">
+					<form id="tvshow_form">
+						<input type="hidden" name="tvshowID" value="${tvshow['tvshowID']}">
+						<table class="table table-striped">
+							<tr><td>Title:</td><td><input type="text" name="tvshowTitle" value="${tvshow['tvshowTitle']}"></td></tr>
+							<tr><td>First Aired:</td><td><input type="text" name="tvshowFirstAired" value="${tvshow['tvshowFirstAired']}"></td></tr>
+							<tr><td>Genre:</td><td><input type="text" name="tvshowGenre" value="${tvshow['tvshowGenre']}"></td></tr>
+							<tr><td>Rated:</td><td><input type="text" name="tvshowRated" value="${tvshow['tvshowRated']}"></td></tr>
+							<tr><td>Network:</td><td><input type="text" name="tvshowNetwork" value="${tvshow['tvshowNetwork']}"></td></tr>
+							<tr><td>Rating:</td><td><input type="text" name="tvshowRating" value="${tvshow['tvshowRating']}"></td></tr>
+							<tr><td>Summary:</td><td><textarea name="tvshowSummary">${tvshow['tvshowSummary']}</textarea></td></tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	%endfor
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>
+
+	$('input').css("width","400px");
+	$('textarea').css({
+		"width":"400px",
+		"height":"150px"
+	});
+
+	$('#updateModal').modal({
+		show:false
+	})
+
+	$("#tvshow_form").submit(function() {
+		$.ajax({
+			type: "POST",
+			url: "tvshowUpdate",
+			data: $("#tvshow_form").serialize(),
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning"><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+				$('#updateModal').modal('hide');
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">TV Show Information Saved Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.reload();}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+
+</script>
+</%def>

@@ -1,0 +1,191 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">
+	%for artist in artistInfo:
+		<%
+			biography = artist['artistBiography'].replace('\n','<BR><BR>')
+			moods = artist['artistMoods'].replace(' / ','</li><li class="list-group-item">')
+			styles = artist['artistStyles'].replace(' / ','</li><li class="list-group-item">')
+			if artist['artistBorn'] == '':
+				bandstart = 'Formed:'
+				bandend = 'Disbanded:'
+			else:
+				bandstart = 'Born:'
+				bandend = 'Died'
+		%>
+		<div class="row">
+			<div class="alert alert-info">
+					<h2 style="display:inline;"><a href="artist?artistID=${artist['artistID']}">${artist['artistName']}</a></h2>
+					<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#updateModal" style="display:inline;">Edit &raquo;</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Vitals</h3>
+					</div>
+					<div class="panel-body">
+					<h4>
+						<table class="table table-striped">
+						<tr><td>Genre:</td><td>${artist['artistGenres']}</td></tr>
+						<tr><td>${bandstart}</td><td>${artist['artistBorn']}${artist['artistFormed']}</td></tr>
+						%if artist['artistDied'] !='' or artist['artistDisbanded'] !='':
+							<tr><td>${bandend}</td><td>${artist['artistDied']}${artist['artistDisbanded']}</td></tr>
+						%endif
+						<tr><td>Active:</td><td>${artist['artistYearsActive']}</td></tr>
+						</table>
+					</h4>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Thumbnail</h3>
+					</div>
+					<div class="panel-body">
+						<div class="photos">
+							<img class="img-thumbnail" src="${artist['artistThumb']}">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Fanart</h3>
+					</div>
+					<div class="panel-body">
+						<div class="photos">
+							<img class="img-thumbnail" src="${artist['artistFan']}">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-sm-9">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Biography</h3>
+					</div>
+					<div class="panel-body">
+						${biography}
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Moods</h3>
+					</div>
+					<div class="panel-body">
+						<ul class="list-group"><li class="list-group-item">${moods}</li></ul>
+					</div>
+				</div>
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Styles</h3>
+					</div>
+					<div class="panel-body">
+						<ul class="list-group"><li class="list-group-item">${styles}</li></ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Albums</h3>
+				</div>
+				<div class="panel-body">
+					%for album in albumInfo:
+						<a href="album?albumID=${album['albumID']}"><img class="img-thumbnail" style="height:175px;" src="${album['albumThumb']}" alt="[${album['albumYear']}] ${album['albumName']}"></a>
+					%endfor
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Update Artist Information: ${artist['artistName']}</h4>
+					</div>
+					<div class="modal-body">
+					<form id="artist_form">
+						<input type="hidden" name="artistID" value="${artist['artistID']}">
+						<input type="hidden" name="artistName" value="${artist['artistName']}">
+						<table class="table table-striped">
+							<tr><td>Born:</td><td><input type="text" name="artistBorn" value="${artist['artistBorn']}"></td></tr>
+							<tr><td>Died:</td><td><input type="text" name="artistDied" value="${artist['artistDied']}"></td></tr>
+							<tr><td>Formed:</td><td><input type="text" name="artistFormed" value="${artist['artistFormed']}"></td></tr>
+							<tr><td>Disbanded:</td><td><input type="text" name="artistDisbanded" value="${artist['artistDisbanded']}"></td></tr>
+							<tr><td>Years Active:</td><td><input type="text" name="artistYearsActive" value="${artist['artistYearsActive']}"></td></tr>
+							<tr><td>Genre:</td><td><input type="text" name="artistGenres" value="${artist['artistGenres']}"></td></tr>
+							<tr><td>Moods:</td><td><input type="text" name="artistMoods" value="${artist['artistMoods']}"></td></tr>
+							<tr><td>Styles:</td><td><input type="text" name="artistStyles" value="${artist['artistStyles']}"></td></tr>
+							<tr><td>Biography:</td><td><textarea name="artistBiography">${artist['artistBiography']}</textarea></td></tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	%endfor
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>
+
+	$('input').css("width","400px");
+	$('textarea').css({
+		"width":"400px",
+		"height":"150px"
+	});
+
+	$('#updateModal').modal({
+		show:false
+	})
+
+	$("#artist_form").submit(function() {
+		$.ajax({
+			type: "POST",
+			url: "artistUpdate",
+			data: $("#artist_form").serialize(),
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning"><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+				$('#updateModal').modal('hide');
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">Artist Information Saved Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.reload();}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+
+</script>
+</%def>

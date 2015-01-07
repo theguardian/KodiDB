@@ -1,0 +1,241 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">
+	<div class="row">
+		<div class="alert alert-info">
+					<h2 style="display:inline;">Results for [${term}]</h2>
+					<a href="search?term=${term}&plot=True"><button class="btn btn-primary pull-right" style="display:inline;">+Plot</button></a>
+		</div>
+	</div>
+
+	<div class="row">
+		%if artists:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Music - Artists</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for artist in artists:
+							<tr>
+							<td><a href="artist?artistID=${artist['artistID']}">
+							<img class="img-thumbnail" src="${artist['artistThumb']}" style="width:75px;"></a></td>
+							<td>
+								<a href="artist?artistID=${artist['artistID']}">${artist['artistName']}</a><BR>
+							</td>
+							</tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+			</div>
+		%endif
+
+		%if albums:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Music - Albums</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for album in albums:
+							<tr>
+							<td><a href="album?albumID=${album['albumID']}">
+							<img class="img-thumbnail" src="${album['albumThumb']}" style="width:75px;"></a></td>
+							<td>
+								<a href="album?albumID=${album['albumID']}">${album['albumName']}</a><BR>
+								by ${album['artistName']}
+							</td>
+							</tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+			</div>
+		%endif
+
+		%if songs:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Music - Songs</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for song in songs:
+							<tr>
+							<td><a href="album?albumID=${song['albumID']}">
+							<img class="img-thumbnail" src="${song['songThumb']}" style="width:75px;"></a></td>
+							<td>
+								<a href="album?albumID=${song['albumID']}">${song['songName']}</a><BR>
+								by ${song['artistName']}
+							</td>
+							</tr>
+						%endfor
+						</table>
+						<br/>
+						<form id="save_playlist" class="pull-right">
+							<input type="hidden" name="term" value="${term}">
+							<input type="hidden" name="media_type" value="songs">
+							<input type="hidden" name="plot" value="${plot}">
+							<input type="text" name="playlist_name" placeholder="Playlist Name">
+							<input type="submit" class="btn-success" value="Save Playlist">
+						</form>
+					</div>
+				</div>
+			</div>
+		%endif
+
+		%if movies:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Movies</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for movie in movies:
+							<tr>
+							<td><a href="movie?movieID=${movie['movieID']}">
+							<img class="img-thumbnail" src="${movie['moviePoster']}" style="width:75px;"></a></td>
+							<td>
+								<a href="movie?movieID=${movie['movieID']}">${movie['movieName']}</a>
+							</td>
+							</tr>
+						%endfor
+						</table>
+						<br/>
+						<form id="save_playlist" class="pull-right">
+							<input type="hidden" name="term" value="${term}">
+							<input type="hidden" name="media_type" value="movies">
+							<input type="hidden" name="plot" value="${plot}">
+							<input type="text" name="playlist_name" placeholder="Playlist Name">
+							<input type="submit" class="btn-success" value="Save Playlist">
+						</form>
+					</div>
+				</div>
+			</div>
+		%endif
+
+		%if series:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">TV Shows</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for show in series:
+							<tr>
+							<td><a href="tvshow?tvshowID=${show['showID']}">
+							<img class="img-thumbnail" src="${show['showPoster']}" style="width:75px;"></a></td>
+							<td>
+								<a href="tvshow?tvshowID=${show['showID']}">${show['showName']}</a>
+							</td>
+							</tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+			</div>
+		%endif
+
+		%if episodes:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">TV Episodes</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for episode in episodes:
+							<tr>
+							<td><a href="episode?episodeID=${episode['episodeID']}">
+							<img class="img-thumbnail" src="${episode['episodeThumb']}" style="width:75px;"></a></td>
+							<td>
+								<a href="episode?episodeID=${episode['episodeID']}">${episode['episodeName']}</a><BR>
+								<a href="tvshow?tvshowID=${episode['showID']}">${episode['showName']}</a>
+							</td>
+							</tr>
+						%endfor
+						</table>
+						<br/>
+						<form id="save_playlist" class="pull-right">
+							<input type="hidden" name="term" value="${term}">
+							<input type="hidden" name="media_type" value="episodes">
+							<input type="hidden" name="plot" value="${plot}">
+							<input type="text" name="playlist_name" placeholder="Playlist Name">
+							<input type="submit" class="btn-success" value="Save Playlist">
+						</form>
+					</div>
+				</div>
+			</div>
+		%endif
+
+		%if mvideos:
+			<div class="col-sm-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Music Videos</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for mvideo in mvideos:
+							<tr>
+							<td><a href="mvideo?mvideoID=${mvideo['mvideoID']}">
+							<img class="img-thumbnail" src="${mvideo['mvideoThumb']}" style="width:75px;"></a></td>
+							<td>
+								<a href="mvideo?mvideoID=${mvideo['mvideoID']}">${mvideo['mvideoName']}</a><BR>
+								by ${mvideo['artistName']}
+							</td>
+							</tr>
+						%endfor
+						</table>
+						<br/>
+						<form id="save_playlist" class="pull-right">
+							<input type="hidden" name="term" value="${term}">
+							<input type="hidden" name="media_type" value="mvideos">
+							<input type="hidden" name="plot" value="${plot}">
+							<input type="text" name="playlist_name" placeholder="Playlist Name">
+							<input type="submit" class="btn-success" value="Save Playlist">
+						</form>
+					</div>
+				</div>
+			</div>
+		%endif
+
+	</div>
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>
+	$("#save_playlist").submit(function() {
+		$.ajax({
+			type: "POST",
+			url: "search",
+			data: $("#save_playlist").serialize(),
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning">Saving Playlist<br/><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">Playlist Saved Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.href("/browse_playlists");}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+</script>
+</%def>

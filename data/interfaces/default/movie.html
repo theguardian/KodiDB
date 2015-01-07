@@ -1,0 +1,148 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">		
+	%for movie in movieInfo:
+		<div class="row">
+			<div class="alert alert-info">
+					<h2 style="display:inline;"><a href="movie?movieID=${movie['movieID']}">${movie['movieTitle']}</a></h2>
+					<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#updateModal" style="display:inline;">Edit &raquo;</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-9">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Vitals</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						<tr><td rowspan="11" width="280px"><img class="img-thumbnail" width="275px" src="${movie['moviePoster']}"></td></tr>
+						<h4>
+						<tr><td>Year:</td><td>${movie['movieYear']}</td></tr>
+						<tr><td>Genre:</td><td>${movie['movieGenre']}</td></tr>
+						<tr><td>Rated:</td><td>${movie['movieRated']}</td></tr>
+						<tr><td>Runtime:</td><td>${movie['movieRuntime']}</td></tr>
+						<tr><td>Rating:</td><td>${movie['movieRating']}</td></tr>
+						<tr><td>Votes:</td><td>${movie['movieVotes']}</td></tr>
+						<tr><td>Studio:</td><td>${movie['movieStudio']}</td></tr>
+						<tr><td>Director(s):</td><td>${movie['movieDirector']}</td></tr>
+						<tr><td>Producer(s):</td><td>${movie['movieProducer']}</td></tr>
+						<tr><td>Tagline:</td><td>${movie['movieTagline']}</td></tr>
+						</h4>
+					</table>
+					<table class="table table-striped">
+						<tr><td>Summary:</td><td>${movie['movieSummary']}</td></tr>
+						<tr><td>Plot:</td><td>${movie['moviePlot']}</td></tr>
+						<tr><td>Path:</td><td>${movie['moviePath']}</td></tr>
+					</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Fanart</h3>
+					</div>
+					<div class="panel-body">
+						<img class="img-thumbnail" src="${movie['movieFan']}">
+					</div>
+				</div>
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Play</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						<tr><td>Play Count:</td><td>${movie['moviePlayCount']}</td></tr>
+						<tr><td>Last Played:</td><td>${movie['movieLastPlayed']}</td></tr>
+						<tr><td>Date Added:</td><td>${movie['movieDateAdded']}</td></tr>
+					</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Update Movie Information: ${movie['movieTitle']}</h4>
+					</div>
+					<div class="modal-body">
+					<form id="movie_form">
+						<input type="hidden" name="movieID" value="${movie['movieID']}">
+						<table class="table table-striped">
+							<tr><td>Title:</td><td><input type="text" name="movieTitle" value="${movie['movieTitle']}"></td></tr>
+							<tr><td>Year:</td><td><input type="text" name="movieYear" value="${movie['movieYear']}"></td></tr>
+							<tr><td>Genre:</td><td><input type="text" name="movieGenre" value="${movie['movieGenre']}"></td></tr>
+							<tr><td>Rated:</td><td><input type="text" name="movieRated" value="${movie['movieRated']}"></td></tr>
+							<tr><td>Runtime:</td><td><input type="text" name="movieRuntime" value="${movie['movieRuntime']}"></td></tr>
+							<tr><td>Rating:</td><td><input type="text" name="movieRating" value="${movie['movieRating']}"></td></tr>
+							<tr><td>Votes:</td><td><input type="text" name="movieVotes" value="${movie['movieVotes']}"></td></tr>
+							<tr><td>Studio:</td><td><input type="text" name="movieStudio" value="${movie['movieStudio']}"></td></tr>
+							<tr><td>Director(s):</td><td><input type="text" name="movieDirector" value="${movie['movieDirector']}"></td></tr>
+							<tr><td>Producer(s):</td><td><input type="text" name="movieProducer" value="${movie['movieProducer']}"></td></tr>
+							<tr><td>Tagline:</td><td><textarea name="movieTagline">${movie['movieTagline']}</textarea></td></tr>
+							<tr><td>Summary:</td><td><textarea name="movieSummary">${movie['movieSummary']}</textarea></td></tr>
+							<tr><td>Plot:</td><td><textarea name="moviePlot">${movie['moviePlot']}</textarea></td></tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	%endfor
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>
+
+	$('input').css("width","400px");
+	$('textarea').css({
+		"width":"400px",
+		"height":"150px"
+	});
+
+	$('#updateModal').modal({
+		show:false
+	})
+
+	$("#movie_form").submit(function() {
+		$.ajax({
+			type: "POST",
+			url: "movieUpdate",
+			data: $("#movie_form").serialize(),
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning"><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+				$('#updateModal').modal('hide');
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">Movie Information Saved Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.reload();}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+
+</script>
+</%def>

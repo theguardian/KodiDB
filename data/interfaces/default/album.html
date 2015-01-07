@@ -1,0 +1,181 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">		
+	%for album in albumInfo:
+		<%
+			if album['albumReview']:
+				review = album['albumReview'].replace('\n','<BR><BR>')
+			else:
+				review = ""
+			if album['albumMoods']:
+				moods = album['albumMoods'].replace(' / ','</li><li class="list-group-item">')
+			else:
+				moods = ""
+			if album['albumStyles']:
+				styles = album['albumStyles'].replace(' / ','</li><li class="list-group-item">')
+			else:
+				styles = ""
+			if album['albumThemes']:
+				themes = album['albumThemes'].replace(' / ','</li><li class="list-group-item">')
+			else:
+				themes = ""
+		%>
+
+		<div class="row">
+			<div class="alert alert-info">
+					<h2 style="display:inline;"><a href="album?albumID=${album['albumID']}">${album['albumName']}</a></h2>
+					<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#updateModal" style="display:inline;">Edit &raquo;</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-9">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Vitals</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						<tr><td rowspan="7" width="280px"><img class="img-thumbnail" width="275px" src="${album['albumThumb']}"></td></tr>
+						<tr><td colspan="2"><h3><a href="artist?artistID=${album['artistID']}">${album['artistName']}</a></h3></td></tr>
+						<h4>
+						<tr><td>Genre:</td><td>${album['albumGenres']}</td></tr>
+						<tr><td>Released:</td><td>${album['albumYear']}</td></tr>
+						<tr><td>Label:</td><td>${album['albumLabel']}</td></tr>
+						<tr><td>Rating:</td><td>${album['albumRating']}</td></tr>
+						<tr><td>Runtime:</td><td>${album['albumDuration']}</td></tr>
+						</h4>
+					</table>
+					</div>
+				</div>
+
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Tracklist</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped">
+						%for song in songInfo:
+							<tr><td>${song['track']}</td>
+							<td>${song['trackTitle']}</td>
+							<td>${song['trackDuration']}</td></tr>
+						%endfor
+						</table>
+					</div>
+				</div>
+
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Review</h3>
+					</div>
+					<div class="panel-body">
+					${review}
+					</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-3">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Moods</h3>
+					</div>
+					<div class="panel-body">
+					<ul class="list-group"><li class="list-group-item">${moods}</li></ul>
+					</div>
+				</div>
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Styles</h3>
+					</div>
+					<div class="panel-body">
+					<ul class="list-group"><li class="list-group-item">${styles}</li></ul>
+					</div>
+				</div>
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Themes</h3>
+					</div>
+					<div class="panel-body">
+					<ul class="list-group"><li class="list-group-item">${themes}</li></ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Update Album Information: ${album['albumName']}</h4>
+					</div>
+					<div class="modal-body">
+					<form id="album_form">
+						<input type="hidden" name="albumID" value="${album['albumID']}">
+						<input type="hidden" name="albumName" value="${album['albumName']}">
+						<table class="table table-striped">
+							<tr><td>Label:</td><td><input type="text" name="albumLabel" value="${album['albumLabel']}"></td></tr>
+							<tr><td>Rating:</td><td><input type="text" name="albumRating" value="${album['albumRating']}"></td></tr>
+							<tr><td>Moods:</td><td><input type="text" name="albumMoods" value="${album['albumMoods']}"></td></tr>
+							<tr><td>Styles:</td><td><input type="text" name="albumStyles" value="${album['albumStyles']}"></td></tr>
+							<tr><td>Themes:</td><td><input type="text" name="albumThemes" value="${album['albumThemes']}"></td></tr>
+							<tr><td>Review:</td><td><textarea name="albumReview">${album['albumReview']}</textarea></td></tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	%endfor
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>
+
+	$('input').css("width","400px");
+	$('textarea').css({
+		"width":"400px",
+		"height":"150px"
+	});
+
+	$('#updateModal').modal({
+		show:false
+	})
+
+	$("#album_form").submit(function() {
+		$.ajax({
+			type: "POST",
+			url: "albumUpdate",
+			data: $("#album_form").serialize(),
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning"><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+				$('#updateModal').modal('hide');
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">Album Information Saved Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.reload();}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+
+</script>
+</%def>

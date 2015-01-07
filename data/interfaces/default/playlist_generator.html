@@ -1,0 +1,218 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">
+	<div class="row">
+		<div class="col-sm-3">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Playlists</h3>
+				</div>
+				<div class="panel-body">
+				<p class="text-center">
+					<a href="browse_playlists">
+					<button id="browse_playlists" class="btn-lg btn-primary">Playlists</button></a>
+				</p>
+				</div>
+			</div>
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Process</h3>
+				</div>
+				<div class="panel-body">
+				<p class="text-center">
+					<button id="scrape" class="btn-lg btn-primary">Scrape</button>
+					<a href="playlist_generator?source=${source}&media_type=${type}&generate=True">
+					<button id="match" class="btn-lg btn-primary">Match</button></a>
+				</p>
+				</div>
+			</div>
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Source Selection</h3>
+				</div>
+				<div class="panel-body">
+					<form id="type_choice" name="playlist_source" action="playlist_generator" method="get">
+						<select name="media_type" id="type_choice_1">
+							%if type == "Artists":
+								<option value="Artists" selected>Music - Artists</option>
+							%else:
+								<option value="Artists">Music - Artists</option>
+							%endif
+							%if type == "Albums":
+								<option value="Albums" selected>Music - Albums</option>
+							%else:
+								<option value="Albums">Music - Albums</option>
+							%endif
+							%if type == "Songs":
+								<option value="Songs" selected>Music - Songs</option>
+							%else:
+								<option value="Songs">Music - Songs</option>
+							%endif
+							%if type == "Movies":
+								<option value="Movies" selected>Movies</option>
+							%else:
+								<option value="Movies">Movies</option>
+							%endif
+						</select>
+						<select name="source" id="type_choice_2">
+							%if source == "Billboard":
+								<option value="Billboard" selected>Billboard</option>
+							%else:
+								<option value="Billboard">Billboard</option>
+							%endif
+							%if source == "Rotten Tomatoes":
+								<option value="Rotten Tomatoes" selected>Rotten Tomatoes</option>
+							%else:
+								<option value="Rotten Tomatoes">Rotten Tomatoes</option>
+							%endif
+						</select>
+						<input type="submit" value="Go">
+					</form>
+				</div>
+			</div>
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">${source} - ${type}</h3>
+				</div>
+				<div class="panel-body">
+					%for feed in feedInfo:
+						%if feed['enabled']=='Yes':
+							<p><a href="playlist_generator?source=${source}&media_type=${type}&toggleID=${feed['id']}">
+							<button id="${feed['id']}" class="btn-success">
+						%else:
+							<p><a href="playlist_generator?source=${source}&media_type=${type}&toggleID=${feed['id']}">
+							<button id="${feed['id']}" class="btn-danger">
+						%endif
+						${feed['plaintext']}
+						</button></a></p>
+					%endfor
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-9">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">${source} - ${type}</h3>
+				</div>
+				<div class="panel-body">
+					<table width="100%" class="table-striped">
+						<tr><th>Chart</th><th>#</th><th>Artist</th><th>${type}</th></tr>
+					%for playlist in playlistInfo:
+						<tr><td>${playlist['genre']}</td><td>${playlist['rank']}</td><td>${playlist['artist']}</td><td><a href="${playlist['link']}">${playlist['album']}</a></td></tr>
+					%endfor
+					</table>
+				</div>
+			</div>
+
+			%if generate=="True":
+
+			<div class="panel panel-success">
+				<div class="panel-heading">
+					<h3 class="panel-title">Final Playlist</h3>
+				</div>
+				<div class="panel-body">
+					<table width="100%" class="table-striped">
+						<tr><th>Artist</th><th>${type}</th></tr>
+					%for album in haveAlbums:
+						<tr><td>${album['artist']}</td><td>${album['album']}</td></tr>
+					%endfor
+					</table>
+					<br/>
+					<form id="save_playlist" class="pull-right">
+						<input type="text" name="playlist_name" placeholder="Playlist Name">
+						<input type="submit" class="btn-success" value="Save Playlist">
+					</form>
+				</div>
+			</div>
+
+			%if needArtists:
+			<div class="panel panel-danger">
+				<div class="panel-heading">
+					<h3 class="panel-title">Missing Artists</h3>
+				</div>
+				<div class="panel-body">
+					<table width="100%" class="table-striped">
+						<tr><th>Artist</th><th>${type}</th></tr>
+					%for artist in needArtists:
+						<tr><td>${artist['artist']}</td><td>${artist['album']}</td></tr>
+					%endfor
+					</table>
+				</div>
+			</div>
+			%endif
+
+			%if needAlbums:
+			<div class="panel panel-danger">
+				<div class="panel-heading">
+					<h3 class="panel-title">Missing ${type}</h3>
+				</div>
+				<div class="panel-body">
+					<table width="100%" class="table-striped">
+						<tr><th>Artist</th><th>${type}</th></tr>
+					%for album in needAlbums:
+						<tr><td>${album['artist']}</td><td>${album['album']}</td></tr>
+					%endfor
+					</table>
+				</div>
+			</div>
+			%endif
+
+			%endif
+
+		</div>
+	</div>
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>	
+	$("#scrape").click(function() {
+		$.ajax({
+			type: "GET",
+			url: "scrapePlaylists",
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning">Scraping Playlists<br/><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">Playlists Scraped Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.reload();}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+
+	$("#save_playlist").submit(function() {
+		$.ajax({
+			type: "POST",
+			url: "savePlaylist",
+			data: $("#save_playlist").serialize(),
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning">Saving Playlist<br/><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">Playlist Saved Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.href("/browse_playlists");}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+
+</script>
+</%def>

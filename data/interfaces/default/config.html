@@ -1,0 +1,135 @@
+<%inherit file="base.html"/>
+<%!
+    import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">
+    <ul class="nav nav-tabs" id="configTable">
+        <li><a href="#1" data-toggle="tab">Server</a></li>
+        <li><a href="#2" data-toggle="tab">XBMC</a></li>
+    </ul>
+    <form id="config_form">
+    <div class="tab-content">
+        <div class="tab-pane" id="1">
+            <table class="table table-striped">
+                <tr>
+                    <td>Server Name:</td>
+                    <td><input type="text" name="server_name" value="${config['server_name']}" size="20" maxlength="40"></td>
+                    <td>Log Directory</td>
+                    <td><input type="text" name="logdir" value="${config['logdir']}" size="40" maxlength="127"></td>
+                </tr>
+                <tr>
+                    <td>Broadcast Address:</td>
+                    <td><input type="text" name="http_host" value="${config['http_host']}" size="15" maxlength="15"></td>
+                    <td>Broadcast Port:</td>
+                    <td><input type="text" name="http_port" value="${config['http_port']}" size="5" maxlength="5"></td>
+                </tr>
+                <tr>
+                    <td>Username:</td>
+                    <td><input type="text" name="http_user" value="${config['http_user']}" size="20" maxlength="40"></td>
+                    <td>Password:</td>
+                    <td><input type="password" name="http_pass" value="${config['http_pass']}" size="20" maxlength="40"></td>
+                </tr>
+                <tr>
+                    <td>Theme:</td>
+                    <td>
+                    <select name="http_look">
+                    %for http_look in config['http_look_list']:
+                        <%
+                            if http_look == cherrystrap.HTTP_LOOK:
+                                selected = 'selected="selected"'
+                            else:
+                                selected = ''
+                        %>
+                        <option value="${http_look}" ${selected}>${http_look}</option>
+                    %endfor
+                    </select>
+                    </td>
+                    <td>Launch Browser:</td>
+                    <td>
+                        <input type="checkbox" name="launch_browser" value=1 ${config['launch_browser']}>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-pane" id="2">
+            <table class="table table-striped">
+                <tr>
+                    <td>XBMC Version:</td>
+                    <td>
+                    <select name="xbmc_version">
+                        <%
+                            if config['xbmc_version'] == 'Frodo':
+                                frodo_selected = 'selected="selected"'
+                            else:
+                                frodo_selected = ''
+                            if config['xbmc_version'] == 'Gotham':
+                                gotham_selected = 'selected="selected"'
+                            else:
+                                gotham_selected = ''
+                            if config['xbmc_version'] == 'Helix':
+                                helix_selected = 'selected="selected"'
+                            else:
+                                helix_selected = ''
+                        %>
+                        <option value="Frodo" ${frodo_selected}>Frodo (12.x)</option>
+                        <option value="Gotham" ${gotham_selected}>Gotham (13.x)</option>
+                        <option value="Helix" ${helix_selected}>Helix (14.x)</option>
+                    </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>MySQL Host:</td>
+                    <td><input type="text" name="xbmc_host" value="${config['xbmc_host']}" size="15" maxlength="15" placeholder="Default: localhost"></td>
+                    <td>MySQL Port:</td>
+                    <td><input type="text" name="xbmc_port" value="${config['xbmc_port']}" size="10" maxlength="5" placeholder="Default: 3306"></td>
+                </tr>
+                <tr>
+                    <td>MySQL Username:</td>
+                    <td><input type="text" name="xbmc_user" value="${config['xbmc_user']}" size="20" maxlength="40" placeholder="MySQL Username"></td>
+                    <td>MySQL Password:</td>
+                    <td><input type="password" name="xbmc_password" value="${config['xbmc_password']}" size="20" maxlength="40" placeholder="MySQL Password"></td>
+                </tr>
+                <tr>
+                    <td>XBMC Thumbnail Path:</td>
+                    <td><input type="text" name="xbmc_thumb_path" value="${config['xbmc_thumb_path']}" size="30" maxlength="40" placeholder="Path to Thumbnails"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <p align="right"><button type="submit" class="btn btn-primary">Submit</button></p>
+    </form>
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>
+    $('#configTable a:first').tab('show');
+
+    $("#config_form").submit(function() {
+        $.ajax({
+            type: "POST",
+            url: "configUpdate",
+            data: $("#config_form").serialize(),
+            beforeSend: function() {
+                $(".ajaxMsg").html('<div class="alert alert-warning"><img src="images/ajax-loader.gif"></div>').show();
+            },
+            success: function(data)
+            {
+                $(".ajaxMsg").html('<div class="alert alert-success">Configuration Saved Successfully!</div>').show().fadeOut(5000);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                $(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+            }
+        });
+        return false;
+    });
+</script>
+</%def>

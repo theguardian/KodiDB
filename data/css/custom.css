@@ -1,0 +1,13 @@
+table#artist_table th#date { width:100px; }
+table#artist_table th#albums { width:100px; }
+table#artist_table th#songs { width:100px; }
+
+table#artist_table td#date { width:100px; }
+table#artist_table td#albums { width:100px; }
+table#artist_table td#songs { width:100px; }
+
+table#album_table th#date { width:100px; }
+table#album_table th#rating { width:100px; }
+
+table#album_table td#date { width:100px; }
+table#album_table td#rating { width:100px; }

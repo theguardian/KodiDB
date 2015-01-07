@@ -1,0 +1,65 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+<link rel="stylesheet" href="css/data_table.css">
+</%def>
+
+<%def name="body()">
+	<table class="table table-striped" id="album_table">
+		<thead>
+			<tr>
+				<th id="album">Album</th>
+				<th id="date">Released</th>
+				<th id="artist">Artist</th>
+				<th id="genre">Genre</th>
+				<th id="rating">Rating</th>
+				
+			</tr>
+		</thead>
+		<tbody>
+		%for album in albumInfo:
+			<tr class="gradeZ">
+				<td id="album"><a href="album?albumID=${album['albumID']}">${album['albumName']}</td>
+				<td id="date">${album['albumYear']}</td>
+				<td id="artist"><a href="artist?artistID=${album['artistID']}">${album['artistName']}</a></td>
+				<td id="genre">${album['albumGenre']}</td>
+				<td id="rating">${album['albumRating']}</td>
+			</tr>
+		%endfor		
+		</tbody>
+	</table>
+</%def>
+
+<%def name="javascriptIncludes()">
+	<script src="js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function()
+		{
+			$('#album_table').dataTable(
+				{
+					"aoColumns": [
+						null,
+						null,
+						null,
+						null,
+						null
+						],
+					"oLanguage": {
+						"sLengthMenu":"Show _MENU_ albums per page",
+						"sEmptyTable": "No albums found",
+						"sInfo":"Showing _START_ to _END_ of _TOTAL_ results",
+						"sInfoEmpty":"Showing 0 to 0 of 0 albums",
+						"sInfoFiltered":"(filtered from _MAX_ total albums)"},
+					"sPaginationType": "full_numbers",
+					"bStateSave": true,
+					"aLengthMenu": [[5, 10, 15, 25, 50, 100, -1], [5, 10, 15, 25, 50, 100, "All"]],
+					"iDisplayLength": 10,
+			});
+			$('.dataTables_filter input').attr("placeholder", "Search");
+		});
+	</script>
+</%def>

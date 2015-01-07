@@ -1,0 +1,128 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">		
+	%for mvideo in mvideoInfo:
+		<div class="row">
+			<div class="alert alert-info">
+					<h2 style="display:inline;"><a href="mvideo?mvideoID=${mvideo['mvideoID']}">${mvideo['mvideoTitle']}</a></h2>
+					<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#updateModal" style="display:inline;">Edit &raquo;</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-9">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Vitals</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						<tr><td rowspan="7" width="280px"><img class="img-thumbnail" width="275px" src="${mvideo['mvideoThumb']}"></td></tr>
+						<h4>
+						<tr><td>Artist:</td><td><a href="mvideoartist?mvideoartistID=${mvideo['mvideoArtistID']}">${mvideo['mvideoArtist']}</a></td></tr>
+						<tr><td>Album:</td><td>${mvideo['mvideoAlbum']}</td></tr>
+						<tr><td>Track:</td><td>${mvideo['mvideoTrack']}</td></tr>
+						<tr><td>Year:</td><td>${mvideo['mvideoYear']}</td></tr>
+						<tr><td>Label:</td><td>${mvideo['mvideoLabel']}</td></tr>
+						<tr><td>Genre:</td><td>${mvideo['mvideoGenre']}</td></tr>
+						</h4>
+					</table>
+					<table class="table table-striped">
+						<tr><td>Path:</td><td>${mvideo['mvideoPath']}</td></tr>
+					</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Play</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						<tr><td>Play Count:</td><td>${mvideo['mvideoPlayCount']}</td></tr>
+						<tr><td>Last Played:</td><td>${mvideo['mvideoLastPlayed']}</td></tr>
+						<tr><td>Date Added:</td><td>${mvideo['mvideoDateAdded']}</td></tr>
+					</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Update Music Video Information: ${mvideo['mvideoTitle']}</h4>
+					</div>
+					<div class="modal-body">
+					<form id="mvideo_form">
+						<input type="hidden" name="mvideoID" value="${mvideo['mvideoID']}">
+						<table class="table table-striped">
+							<tr><td>Title:</td><td><input type="text" name="mvideoTitle" value="${mvideo['mvideoTitle']}"></td></tr>
+							<tr><td>Artist:</td><td><input type="text" name="mvideoArtist" value="${mvideo['mvideoArtist']}"></td></tr>
+							<tr><td>Album:</td><td><input type="text" name="mvideoAlbum" value="${mvideo['mvideoAlbum']}"></td></tr>
+							<tr><td>Track:</td><td><input type="text" name="mvideoTrack" value="${mvideo['mvideoTrack']}"></td></tr>
+							<tr><td>Year:</td><td><input type="text" name="mvideoYear" value="${mvideo['mvideoYear']}"></td></tr>
+							<tr><td>Label:</td><td><input type="text" name="mvideoLabel" value="${mvideo['mvideoLabel']}"></td></tr>
+							<tr><td>Genre:</td><td><input type="text" name="mvideoGenre" value="${mvideo['mvideoGenre']}"></td></tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	%endfor
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>
+
+	$('input').css("width","400px");
+	$('textarea').css({
+		"width":"400px",
+		"height":"150px"
+	});
+
+	$('#updateModal').modal({
+		show:false
+	})
+
+	$("#mvideo_form").submit(function() {
+		$.ajax({
+			type: "POST",
+			url: "mvideoUpdate",
+			data: $("#mvideo_form").serialize(),
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning"><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+				$('#updateModal').modal('hide');
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">Music Video Information Saved Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.reload();}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+
+</script>
+</%def>

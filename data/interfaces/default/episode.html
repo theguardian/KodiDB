@@ -1,0 +1,127 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">		
+	%for episode in episodeInfo:
+		<div class="row">
+			<div class="alert alert-info">
+					<h2 style="display:inline;"><a href="episode?episodeID=${episode['episodeID']}">${episode['episodeTitle']}</a></h2>
+					<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#updateModal" style="display:inline;">Edit &raquo;</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-9">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Vitals</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						<tr><td rowspan="7" width="280px"><img class="img-thumbnail" width="275px" src="${episode['episodeThumb']}"></td></tr>
+						<h4>
+						<tr><td>TV Show:</td><td><a href="tvshow?tvshowID=${episode['episodeShowID']}">${episode['episodeShowTitle']}</a></td></tr>
+						<tr><td>Season:</td><td><a href="tvshow?tvshowID=${episode['episodeShowID']}&seasonID=${episode['episodeSeasonID']}">${episode['episodeSeason']}</a></td></tr>
+						<tr><td>Episode:</td><td>${episode['episodeNumber']}</td></tr>
+						<tr><td>Air Date:</td><td>${episode['episodeAirDate']}</td></tr>
+						<tr><td>Rating:</td><td>${episode['episodeRating']}</td></tr>
+						<tr><td>Runtime:</td><td>${episode['episodeRuntime']}</td></tr>
+						</h4>
+					</table>
+					<table class="table table-striped">
+						<tr><td>Plot:</td><td>${episode['episodePlot']}</td></tr>
+						<tr><td>Path:</td><td>${episode['episodePath']}</td></tr>
+					</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Play</h3>
+					</div>
+					<div class="panel-body">
+					<table class="table table-striped">
+						<tr><td>Play Count:</td><td>${episode['episodePlayCount']}</td></tr>
+						<tr><td>Last Played:</td><td>${episode['episodeLastPlayed']}</td></tr>
+						<tr><td>Date Added:</td><td>${episode['episodeDateAdded']}</td></tr>
+					</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Update Episode Information: ${episode['episodeTitle']}</h4>
+					</div>
+					<div class="modal-body">
+					<form id="episode_form">
+						<input type="hidden" name="episodeID" value="${episode['episodeID']}">
+						<table class="table table-striped">
+							<tr><td>Title:</td><td><input type="text" name="episodeTitle" value="${episode['episodeTitle']}"></td></tr>
+							<tr><td>Air Date:</td><td><input type="text" name="episodeAirDate" value="${episode['episodeAirDate']}"></td></tr>
+							<tr><td>Rating:</td><td><input type="text" name="episodeRating" value="${episode['episodeRating']}"></td></tr>
+							<tr><td>Runtime:</td><td><input type="text" name="episodeRuntime" value="${episode['episodeRuntime']}"></td></tr>
+							<tr><td>Plot:</td><td><textarea name="episodePlot">${episode['episodePlot']}</textarea></td></tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	%endfor
+</%def>
+
+<%def name="javascriptIncludes()">
+<script>
+
+	$('input').css("width","400px");
+	$('textarea').css({
+		"width":"400px",
+		"height":"150px"
+	});
+
+	$('#updateModal').modal({
+		show:false
+	})
+
+	$("#episode_form").submit(function() {
+		$.ajax({
+			type: "POST",
+			url: "episodeUpdate",
+			data: $("#episode_form").serialize(),
+			beforeSend: function() {
+				$(".ajaxMsg").html('<div class="alert alert-warning"><img src="images/ajax-loader.gif" style="display:block; margin-left:auto; margin-right:auto;"></div>').show();
+				$('#updateModal').modal('hide');
+			},
+			success: function(data)
+			{
+				$(".ajaxMsg").html('<div class="alert alert-success">Episode Information Saved Successfully!</div>').show().fadeOut(5000);
+				setTimeout(function(){window.location.reload();}, 3000)
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				$(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+			}
+		});
+		return false;
+	});
+
+</script>
+</%def>

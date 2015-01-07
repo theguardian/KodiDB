@@ -1,0 +1,30 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+
+<%def name="headIncludes()">
+<title>${title}</title>
+</%def>
+
+<%def name="body()">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Playlists</h3>
+				</div>
+				<div class="panel-body">
+					%for file in files:
+						<ul>
+							<li><a href="${file['path']}"><button class="btn-primary">${file['name']}</button></a></li>
+						</ul>
+					%endfor
+				</div>
+			</div>
+		</div>
+	</div>
+</%def>
+
+<%def name="javascriptIncludes()">
+</%def>

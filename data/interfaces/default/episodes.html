@@ -1,0 +1,67 @@
+<%inherit file="base.html"/>
+<%!
+	import cherrystrap
+%>
+<%def name="headIncludes()">
+<title>${title}</title>
+<link rel="stylesheet" href="css/data_table.css">
+</%def>
+
+<%def name="body()">
+	<table class="table table-striped" id="episode_table">
+		<thead>
+			<tr>
+				<th id="title">Title</th>
+				<th id="date">Air Date</th>
+				<th id="show">TV Show</th>
+				<th id="season">Season</th>
+				<th id="episode">Episode</th>
+				<th id="rating">Rating</th>
+				
+			</tr>
+		</thead>
+		<tbody>
+		%for episode in episodeInfo:
+			<tr class="gradeZ">
+				<td id="title"><a href="episode?episodeID=${episode['episodeID']}">${episode['episodeTitle']}</a></td>
+				<td id="date">${episode['episodeDate']}</td>
+				<td id="show"><a href="tvshow?tvshowID=${episode['showID']}">${episode['showTitle']}</a></td>
+				<td id="season">${episode['episodeSeason']}</td>
+				<td id="episode">${episode['episodeEpisode']}</td>
+				<td id="rating">${episode['episodeRating']}</td>
+			</tr>
+		%endfor		
+		</tbody>
+	</table>
+</%def>
+
+<%def name="javascriptIncludes()">
+	<script src="js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function()
+		{
+			$('#episode_table').dataTable(
+				{
+					"aoColumns": [
+						null,
+						null,
+						null,
+						null,
+						null,
+						null
+						],
+					"oLanguage": {
+						"sLengthMenu":"Show _MENU_ episodes per page",
+						"sEmptyTable": "No episodes found",
+						"sInfo":"Showing _START_ to _END_ of _TOTAL_ results",
+						"sInfoEmpty":"Showing 0 to 0 of 0 episodes",
+						"sInfoFiltered":"(filtered from _MAX_ total episodes)"},
+					"sPaginationType": "full_numbers",
+					"bStateSave": true,
+					"aLengthMenu": [[5, 10, 15, 25, 50, 100, -1], [5, 10, 15, 25, 50, 100, "All"]],
+					"iDisplayLength": 10,
+			});
+			$('.dataTables_filter input').attr("placeholder", "Search");
+		});
+	</script>
+</%def>
