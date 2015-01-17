@@ -229,6 +229,13 @@ def save_playlist(playlist_name):
     except:
         logger.info("There was a SQLite connection error.")
         return serve_template(templatename="config.html")
+
+    PLDIR = os.path.join(cherrystrap.DATADIR, 'playlists')
+    if not os.path.exists(PLDIR):
+        try:
+            os.makedirs(PLDIR)
+        except OSError:
+            logger.error('Could not create playlist directory. Check permissions of: ' + cherrystrap.DATADIR)
     
     filename = datetime.datetime.now().strftime('%Y-%m-%d')+" - "+playlist_name
     xbmc_playlist = os.path.join(cherrystrap.DATADIR, 'playlists', filename+'_XBMC.m3u')
