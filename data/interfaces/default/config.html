@@ -75,10 +75,15 @@
                                 helix_selected = 'selected="selected"'
                             else:
                                 helix_selected = ''
+                            if config['xbmc_version'] == 'Isengard':
+                                isengard_selected = 'selected="selected"'
+                            else:
+                                isengard_selected = ''
                         %>
                         <option value="Frodo" ${frodo_selected}>Frodo (12.x)</option>
                         <option value="Gotham" ${gotham_selected}>Gotham (13.x)</option>
                         <option value="Helix" ${helix_selected}>Helix (14.x)</option>
+                        <option value="Isengard" ${isengard_selected}>Isengard (15.x)</option>
                     </select>
                     </td>
                     <td></td>
