@@ -42,8 +42,8 @@ def table_map(version):
 		table_list['musicvideoview'] = video_database+'.musicvideoview'
 
 	elif version == "Isengard":
-		music_database = 'xbmc_music49'
-		video_database = 'xbmc_video91'
+		music_database = 'xbmc_music52'
+		video_database = 'xbmc_video93'
 
 		table_list['artistinfo'] = music_database+'.artist'
 		table_list['albuminfo'] = music_database+'.album'
