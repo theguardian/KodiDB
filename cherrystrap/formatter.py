@@ -3,6 +3,7 @@ import time, datetime
 from datetime import timedelta
 from time import strptime
 import MySQLdb
+import urllib
 
 import cherrystrap
 
@@ -66,43 +67,55 @@ def MySQL(string):
     return value
 
 def get_crc32(string):
-    string = string.lower()        
+    string = string.lower()
     bytes = bytearray(string.encode('UTF-8'))
     crc = 0xffffffff;
     for b in bytes:
-        crc = crc ^ (b << 24)          
+        crc = crc ^ (b << 24)
         for i in range(8):
-            if (crc & 0x80000000 ):                 
-                crc = (crc << 1) ^ 0x04C11DB7                
+            if (crc & 0x80000000 ):
+                crc = (crc << 1) ^ 0x04C11DB7
             else:
-                crc = crc << 1;                        
+                crc = crc << 1;
         crc = crc & 0xFFFFFFFF
-        
+
     return '%08x' % crc
 
 def get_image_locations(assetID, thumb_url=None, banner_url=None, poster_url=None, fanart_url=None):
-    
+
     if thumb_url:
         thumbFile = get_crc32(thumb_url)
         thumbSub = thumbFile[:1]
         artThumb = os.path.join(cherrystrap.XBMC_THUMB_PATH, thumbSub, thumbFile)
-        if os.path.isfile(artThumb+'.jpg'):
+        remoteThumbJpg = urllib.urlopen(artThumb+'.jpg')
+        remoteThumbPng = urllib.urlopen(artThumb+'.png')
+    	if os.path.isfile(artThumb+'.jpg'):
             artThumb = 'images/Thumbnails/'+thumbSub+'/'+thumbFile+'.jpg'
         elif os.path.isfile(artThumb+'.png'):
             artThumb = 'images/Thumbnails/'+thumbSub+'/'+thumbFile+'.png'
+    	elif remoteThumbJpg.getcode() == 200:
+    	    artThumb = artThumb+'.jpg'
+    	elif remoteThumbPng.getcode() == 200:
+    	    artThumb = artThumb+'.png'
         else:
             artThumb = 'images/no_image.jpg'
     else:
         artThumb = 'images/no_image.jpg'
-    
+
     if banner_url:
         bannerFile = get_crc32(banner_url)
         bannerSub = bannerFile[:1]
         artBanner = os.path.join(cherrystrap.XBMC_THUMB_PATH, bannerSub, bannerFile)
+        remoteBannerJpg = urllib.urlopen(artBanner+'.jpg')
+        remoteBannerPng = urllib.urlopen(artBanner+'.png')
         if os.path.isfile(artBanner+'.jpg'):
             artBanner = 'images/Thumbnails/'+bannerSub+'/'+bannerFile+'.jpg'
         elif os.path.isfile(artBanner+'.png'):
             artBanner = 'images/Thumbnails/'+bannerSub+'/'+bannerFile+'.png'
+    	elif remoteBannerJpg.getcode() == 200:
+    	    artBanner= artBanner+'.jpg'
+    	elif remoteBannerPng.getcode() == 200:
+    	    artBanner = artBanner+'.png'
         else:
             artBanner = 'images/no_image.jpg'
     else:
@@ -112,10 +125,16 @@ def get_image_locations(assetID, thumb_url=None, banner_url=None, poster_url=Non
         posterFile = get_crc32(poster_url)
         posterSub = posterFile[:1]
         artPoster = os.path.join(cherrystrap.XBMC_THUMB_PATH, posterSub, posterFile)
+        remotePosterJpg = urllib.urlopen(artPoster+'.jpg')
+        remotePosterPng = urllib.urlopen(artPoster+'.png')
         if os.path.isfile(artPoster+'.jpg'):
             artPoster = 'images/Thumbnails/'+posterSub+'/'+posterFile+'.jpg'
         elif os.path.isfile(artPoster+'.png'):
             artPoster = 'images/Thumbnails/'+posterSub+'/'+posterFile+'.png'
+    	elif remotePosterJpg.getcode() == 200:
+    	    artPoster= artPoster+'.jpg'
+    	elif remotePosterPng.getcode() == 200:
+    	    artPoster = artPoster+'.png'
         else:
             artPoster = 'images/no_image.jpg'
     else:
@@ -125,10 +144,16 @@ def get_image_locations(assetID, thumb_url=None, banner_url=None, poster_url=Non
         fanFile = get_crc32(fanart_url)
         fanSub = fanFile[:1]
         artFan = os.path.join(cherrystrap.XBMC_THUMB_PATH, fanSub, fanFile)
+        remoteFanJpg = urllib.urlopen(artFan+'.jpg')
+        remoteFanPng = urllib.urlopen(artFan+'.png')
         if os.path.isfile(artFan+'.jpg'):
             artFan = 'images/Thumbnails/'+fanSub+'/'+fanFile+'.jpg'
         elif os.path.isfile(artFan+'.png'):
             artFan = 'images/Thumbnails/'+fanSub+'/'+fanFile+'.png'
+    	elif remoteFanJpg.getcode() == 200:
+    	    artFan= artFan+'.jpg'
+    	elif remoteFanPng.getcode() == 200:
+    	    artFan = artFan+'.png'
         else:
             artFan = 'images/no_image.jpg'
     else:
