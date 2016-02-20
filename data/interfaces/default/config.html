@@ -79,11 +79,16 @@
                                 isengard_selected = 'selected="selected"'
                             else:
                                 isengard_selected = ''
+                            if config['xbmc_version'] == 'Jarvis':
+                                jarvis_selected = 'selected="selected"'
+                            else:
+                                jarvis_selected = ''
                         %>
                         <option value="Frodo" ${frodo_selected}>Frodo (12.x)</option>
                         <option value="Gotham" ${gotham_selected}>Gotham (13.x)</option>
                         <option value="Helix" ${helix_selected}>Helix (14.x)</option>
                         <option value="Isengard" ${isengard_selected}>Isengard (15.x)</option>
+                        <option value="Jarvis" ${jarvis_selected}>Jarvis (16.x)</option>
                     </select>
                     </td>
                     <td></td>
@@ -130,8 +135,8 @@
             {
                 $(".ajaxMsg").html('<div class="alert alert-success">Configuration Saved Successfully!</div>').show().fadeOut(5000);
             },
-            error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                $(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000); 
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                $(".ajaxMsg").html('<div class="alert alert-danger">'+textStatus+': '+errorThrown+'</div>').show().fadeOut(5000);
             }
         });
         return false;

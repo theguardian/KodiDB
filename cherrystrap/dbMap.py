@@ -54,6 +54,19 @@ def table_map(version):
 		table_list['episodeview'] = video_database+'.episode_view'
 		table_list['musicvideoview'] = video_database+'.musicvideo_view'
 
+	elif version == "Jarvis":
+		music_database = 'xbmc_music56'
+		video_database = 'xbmc_video99'
+
+		table_list['artistinfo'] = music_database+'.artist'
+		table_list['albuminfo'] = music_database+'.album'
+
+		table_list['movieview'] = video_database+'.movie_view'
+		table_list['tvshowview'] = video_database+'.tvshow_view'
+		table_list['seasonview'] = video_database+'.season_view'
+		table_list['episodeview'] = video_database+'.episode_view'
+		table_list['musicvideoview'] = video_database+'.musicvideo_view'
+
 	#Common
 	table_list['music_art'] = music_database+'.art'
 	table_list['artist'] = music_database+'.artist'
