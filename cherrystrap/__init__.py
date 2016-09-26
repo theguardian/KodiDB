@@ -168,7 +168,7 @@ def initialize():
         XBMC_PASSWORD = check_setting_str(CFG, 'XBMC', 'xbmc_password', '')
         XBMC_THUMB_PATH = check_setting_str(CFG, 'XBMC', 'xbmc_thumb_path', '')
 
- 
+
         if not LOGDIR:
             LOGDIR = os.path.join(DATADIR, 'Logs')
 

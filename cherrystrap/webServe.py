@@ -79,7 +79,7 @@ class WebInterface(object):
 
         lastTime = lastTime_raw.strftime("%Y-%m-%d %H:%M:%S")
         timeLimit = timelimit_raw.strftime("%Y-%m-%d %H:%M:%S")
-        
+
         if view:
             if view=='played':
                 songs = myDB.select("SELECT idAlbum, lastplayed, strArtists, strTitle, strAlbum FROM %s WHERE lastPlayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['songview'], lastTime, timeLimit))
@@ -97,14 +97,14 @@ class WebInterface(object):
                 songs = myDB.select("SELECT idAlbum, lastplayed, strArtists, strTitle, strAlbum FROM %s WHERE lastPlayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['songview'], lastTime, timeLimit))
                 episodes = myDB.select("SELECT idEpisode, idShow, idSeason, c00, strTitle, c12, c13, lastPlayed FROM %s WHERE lastplayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['episodeview'], lastTime, timeLimit))
                 movies = myDB.select("SELECT idMovie, c00, c07, lastPlayed FROM %s WHERE lastplayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['movieview'], lastTime, timeLimit))
-                mvideos = myDB.select("SELECT idMVideo, c00, c10, c14, lastPlayed FROM %s WHERE lastplayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['musicvideoview'], lastTime, timeLimit)) 
+                mvideos = myDB.select("SELECT idMVideo, c00, c10, c14, lastPlayed FROM %s WHERE lastplayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['musicvideoview'], lastTime, timeLimit))
                 viewmode = "Played"
                 logger.warn("Incorrect format of view query. Defaulting to 'played' view.")
         else:
             songs = myDB.select("SELECT idAlbum, lastplayed, strArtists, strTitle, strAlbum FROM %s WHERE lastPlayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['songview'], lastTime, timeLimit))
             episodes = myDB.select("SELECT idEpisode, idShow, idSeason, c00, strTitle, c12, c13, lastPlayed FROM %s WHERE lastplayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['episodeview'], lastTime, timeLimit))
             movies = myDB.select("SELECT idMovie, c00, c07, lastPlayed FROM %s WHERE lastplayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['movieview'], lastTime, timeLimit))
-            mvideos = myDB.select("SELECT idMVideo, c00, c10, c14, lastPlayed FROM %s WHERE lastplayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['musicvideoview'], lastTime, timeLimit)) 
+            mvideos = myDB.select("SELECT idMVideo, c00, c10, c14, lastPlayed FROM %s WHERE lastplayed BETWEEN '%s' AND '%s' ORDER BY lastPlayed DESC" % (table['musicvideoview'], lastTime, timeLimit))
             viewmode = "Played"
 
         lastSongs=[]
@@ -122,7 +122,7 @@ class WebInterface(object):
                 else:
                     songTitle = song['strTitle']
                     dateAdded = ""
-                    lastPlayed = song['lastplayed']                    
+                    lastPlayed = song['lastplayed']
 
                 imageUrls = myDB.select("SELECT * FROM %s WHERE media_id = %s AND media_type='album'" % (table['music_art'], albumID))
                 if imageUrls:
@@ -258,7 +258,7 @@ class WebInterface(object):
                     })
         else:
             logger.info("There are no music videos to display")
-    
+
         return serve_template(templatename="index.html", title=cherrystrap.SERVER_NAME, viewmode=viewmode, timeframe=timeframe, lastSongs=lastSongs, lastEpisodes=lastEpisodes, lastMovies=lastMovies, lastMVideos=lastMVideos)
     index.exposed=True
 
@@ -283,10 +283,10 @@ class WebInterface(object):
                     "xbmc_password":    cherrystrap.XBMC_PASSWORD,
                     "xbmc_thumb_path":  cherrystrap.XBMC_THUMB_PATH
                 }
-        return serve_template(templatename="config.html", title="Settings", config=config)    
+        return serve_template(templatename="config.html", title="Settings", config=config)
     config.exposed = True
 
-    def configUpdate(self, server_name="Server", http_host='0.0.0.0', http_user=None, http_port=7949, http_pass=None, http_look=None, launch_browser=0, logdir=None, 
+    def configUpdate(self, server_name="Server", http_host='0.0.0.0', http_user=None, http_port=7949, http_pass=None, http_look=None, launch_browser=0, logdir=None,
         xbmc_version=None, xbmc_host=None, xbmc_port=None, xbmc_user=None, xbmc_password=None, xbmc_thumb_path=None):
 
         cherrystrap.SERVER_NAME = server_name
@@ -359,7 +359,7 @@ class WebInterface(object):
             artistSafe = formatter.MySQL(artistName)
             num_songs = myDB.action("SELECT COUNT(*) as counted FROM %s WHERE idArtist = %s" % (table['song_artist'], artistID)).fetchone()
             song_count = int(num_songs['counted'])
-            
+
             album_count = 0
             ref_year = 0
             albums = myDB.select("SELECT idAlbum, strAlbum, iYear FROM %s WHERE lower(strArtists) = '%s'" % (table['album'], artistSafe.lower()))
@@ -531,7 +531,7 @@ class WebInterface(object):
         episodes = myDB.select("SELECT * FROM %s" % table['episode'])
         if episodes:
             for episode in episodes:
-            
+
                 episodeID = episode['idEpisode']
                 episodeTitle = episode['c00']
                 episodeRating = episode['c03']
@@ -569,7 +569,7 @@ class WebInterface(object):
         mvideos = myDB.select("SELECT idMVideo, c00, c07, c09, c10, c14 FROM %s" % table['musicvideo'])
         if mvideos:
             for mvideo in mvideos:
-            
+
                 mvideoID = mvideo['idMVideo']
                 mvideoArtistID = mvideo['c14']
                 mvideoTitle = mvideo['c00']
@@ -611,7 +611,7 @@ class WebInterface(object):
                         elif image['type'] == 'fanart':
                             fanart_url = image['url']
 
-                
+
                 artistThumb, artistBanner, artistPoster, artistFan = formatter.get_image_locations(artistID, thumb_url=thumb_url, fanart_url=fanart_url)
         else:
             logger.info("There is no artist with ID: %s" % artistID)
@@ -769,7 +769,7 @@ class WebInterface(object):
         mvideos = myDB.select("SELECT idMVideo, c00, c06, c07, c09, c10, c11, c12, c14, strFileName, strPath, playCount, lastPlayed, dateAdded FROM %s WHERE idMVideo = %s" % (table['musicvideoview'], mvideoID))
         if mvideos:
             for mvideo in mvideos:
-            
+
                 mvideoID = mvideo['idMVideo']
                 mvideoArtistID = mvideo['c14']
                 mvideoTitle = mvideo['c00']
@@ -824,7 +824,7 @@ class WebInterface(object):
         mvideos = myDB.select("SELECT idMVideo, c00, c06, c07, c09, c10, c11, c12, c14, strFileName, strPath, playCount, lastPlayed, dateAdded FROM %s WHERE c14 = %s ORDER BY c07, c12 ASC" % (table['musicvideoview'], mvideoartistID))
         if mvideos:
             for mvideo in mvideos:
-            
+
                 mvideoID = mvideo['idMVideo']
                 mvideoArtistID = mvideo['c14']
                 mvideoTitle = mvideo['c00']
@@ -864,7 +864,7 @@ class WebInterface(object):
                     'mvideoDateAdded': mvideoDateAdded,
                     'mvideoThumb': mvideoThumb
                     })
-        return serve_template(templatename="mvideoartist.html", title=mvideoArtist, mvideoInfo=mvideoInfo, mvideoArtist=mvideoArtist, 
+        return serve_template(templatename="mvideoartist.html", title=mvideoArtist, mvideoInfo=mvideoInfo, mvideoArtist=mvideoArtist,
             mvideoartistID=mvideoartistID)
     mvideoartist.exposed=True
 
@@ -880,7 +880,7 @@ class WebInterface(object):
         movies = myDB.select("SELECT idmovie, c00, c01, c02, c03, c04, c05, c06, c07, c11, c12, c14, c15, c18, strFileName, strPath, playCount, lastPlayed, dateAdded FROM %s WHERE idmovie = %s" % (table['movieview'], movieID))
         if movies:
             for movie in movies:
-            
+
                 movieID = movie['idMovie']
                 movieTitle = movie['c00']
                 moviePlot = movie['c01']
@@ -954,7 +954,7 @@ class WebInterface(object):
         tvshows = myDB.select("SELECT idShow, c00, c01, c04, c05, c08, c13, c14, strPath, lastPlayed, dateAdded, totalCount, watchedcount FROM %s WHERE idShow = %s" % (table['tvshowview'], tvshowID))
         if tvshows:
             for tvshow in tvshows:
-            
+
                 tvshowID = tvshow['idShow']
                 tvshowTitle = tvshow['c00']
                 tvshowSummary = tvshow['c01']
@@ -1007,7 +1007,7 @@ class WebInterface(object):
                     'tvshowFan': tvshowFan,
                     'tvshowBanner': tvshowBanner
                     })
-        
+
         seasonList=[]
         if not seasonID:
             seasons = myDB.select("SELECT idSeason, idShow, season, episodes, playCount FROM %s WHERE idShow = %s ORDER BY season ASC" % (table['seasonview'], tvshowID))
@@ -1091,7 +1091,7 @@ class WebInterface(object):
                         })
 
 
-        return serve_template(templatename="tvshow.html", title=tvshowTitle, tvshowInfo=tvshowInfo, seasonList=seasonList, episodeList=episodeList, 
+        return serve_template(templatename="tvshow.html", title=tvshowTitle, tvshowInfo=tvshowInfo, seasonList=seasonList, episodeList=episodeList,
             seasonNumber=seasonNumber, seasonEpisodes=seasonEpisodes, seasonPlayCount=seasonPlayCount, seasonPoster=seasonPoster, seasonID=seasonID)
     tvshow.exposed=True
 
@@ -1107,7 +1107,7 @@ class WebInterface(object):
         episodes = myDB.select("SELECT idEpisode, c00, c01, c03, c05, c09, c12, c13, idShow, idSeason, strTitle, strFileName, strPath, playCount, lastPlayed, dateAdded FROM %s WHERE idEpisode = %s" % (table['episodeview'], episodeID))
         if episodes:
             for episode in episodes:
-            
+
                 episodeID = episode['idEpisode']
                 episodeTitle = episode['c00']
                 episodePlot = episode['c01']
@@ -1159,7 +1159,7 @@ class WebInterface(object):
         return serve_template(templatename="episode.html", title=episodeTitle, episodeInfo=episodeInfo)
     episode.exposed=True
 
-    def artistUpdate(self, artistID, artistName, artistBorn, artistFormed, artistDied, artistDisbanded, artistGenres, artistMoods, artistStyles, 
+    def artistUpdate(self, artistID, artistName, artistBorn, artistFormed, artistDied, artistDisbanded, artistGenres, artistMoods, artistStyles,
         artistYearsActive, artistBiography):
         try:
             table = table_map(cherrystrap.XBMC_VERSION)
@@ -1168,7 +1168,7 @@ class WebInterface(object):
         except:
             logger.info("There was a MySQL connection error.  Please check your XBMC MySQL connection credentials")
             return serve_template(templatename="logs.html", title="Log", lineList=cherrystrap.LOGLIST)
-        
+
         controlValueDict = {"idArtist": artistID}
         newValueDict = {
             'strBorn': artistBorn,
@@ -1193,7 +1193,7 @@ class WebInterface(object):
         except:
             logger.info("There was a MySQL connection error.  Please check your XBMC MySQL connection credentials")
             return serve_template(templatename="logs.html", title="Log", lineList=cherrystrap.LOGLIST)
-        
+
         controlValueDict = {"idAlbum": albumID}
         newValueDict = {
             'strMoods': albumMoods,
@@ -1215,7 +1215,7 @@ class WebInterface(object):
         except:
             logger.info("There was a MySQL connection error.  Please check your XBMC MySQL connection credentials")
             return serve_template(templatename="logs.html", title="Log", lineList=cherrystrap.LOGLIST)
-        
+
         controlValueDict = {"idMVideo": mvideoID}
         newValueDict = {
             'c00': mvideoTitle,
@@ -1239,7 +1239,7 @@ class WebInterface(object):
         except:
             logger.info("There was a MySQL connection error.  Please check your XBMC MySQL connection credentials")
             return serve_template(templatename="logs.html", title="Log", lineList=cherrystrap.LOGLIST)
-        
+
         controlValueDict = {"idMovie": movieID}
         newValueDict = {
             'c00': movieTitle,
@@ -1260,7 +1260,7 @@ class WebInterface(object):
         logger.info("Information updated for movie: %s" % movieTitle)
     movieUpdate.exposed=True
 
-    def tvshowUpdate(self, tvshowID, tvshowTitle, tvshowSummary, tvshowRating, tvshowFirstAired, tvshowGenre, 
+    def tvshowUpdate(self, tvshowID, tvshowTitle, tvshowSummary, tvshowRating, tvshowFirstAired, tvshowGenre,
         tvshowRated, tvshowNetwork):
         try:
             table = table_map(cherrystrap.XBMC_VERSION)
@@ -1269,7 +1269,7 @@ class WebInterface(object):
         except:
             logger.info("There was a MySQL connection error.  Please check your XBMC MySQL connection credentials")
             return serve_template(templatename="logs.html", title="Log", lineList=cherrystrap.LOGLIST)
-        
+
         controlValueDict = {"idShow": tvshowID}
         newValueDict = {
             'c00': tvshowID,
@@ -1293,7 +1293,7 @@ class WebInterface(object):
         except:
             logger.info("There was a MySQL connection error.  Please check your XBMC MySQL connection credentials")
             return serve_template(templatename="logs.html", title="Log", lineList=cherrystrap.LOGLIST)
-        
+
         controlValueDict = {"idEpisode": episodeID}
         newValueDict = {
             'c00': episodeTitle,
@@ -1308,7 +1308,7 @@ class WebInterface(object):
 
 
     def playlist_generator(self, source=None, media_type=None, generate=None, toggleID=None):
-        
+
         have_albums = []
         need_albums = []
         need_artists = []
@@ -1324,7 +1324,7 @@ class WebInterface(object):
         except:
             logger.info("There was a SQLite connection error.")
             return serve_template(templatename="config.html")
-        
+
         if toggleID:
             controlValueDict = {"id": toggleID}
             toggler = myDB.select("SELECT id, enabled FROM available_options WHERE id = ?", [toggleID])
@@ -1360,7 +1360,7 @@ class WebInterface(object):
                         'artist': entry['billboard_nr_artist'],
                         'album': entry['billboard_nr_album'],
                         'rank': entry['billboard_nr_rank'],
-                        'link': entry['billboard_nr_link']                    
+                        'link': entry['billboard_nr_link']
                         })
 
         elif source=="Rotten Tomatoes":
@@ -1373,18 +1373,18 @@ class WebInterface(object):
                         'artist': "",
                         'album': entry['rotten_title'],
                         'rank': entry['rotten_percent'],
-                        'link': entry['rotten_link']                  
+                        'link': entry['rotten_link']
                         })
 
         if generate:
             have_albums, need_artists, need_albums = backend.match_playlist(source, media_type)
 
-        return serve_template(templatename="playlist_generator.html", title="Playlist Generator", source=source, type=media_type, generate=generate, feedInfo=feedInfo, 
+        return serve_template(templatename="playlist_generator.html", title="Playlist Generator", source=source, type=media_type, generate=generate, feedInfo=feedInfo,
             playlistInfo=playlistInfo, needArtists=need_artists, haveAlbums=have_albums, needAlbums=need_albums)
     playlist_generator.exposed=True
 
     def browse_playlists(self):
-        
+
         playlist_array = []
         playlist_path = os.path.join(cherrystrap.DATADIR, 'playlists')
         for root, dirs, files in os.walk(playlist_path):
@@ -1393,7 +1393,7 @@ class WebInterface(object):
                     'path': 'playlists?filename='+name,
                     'name': name
                     })
-        playlist_array = sorted(playlist_array, key=lambda k: k['name'], reverse=True) 
+        playlist_array = sorted(playlist_array, key=lambda k: k['name'], reverse=True)
 
         return serve_template(templatename="browse_playlists.html", title="Playlists", files=playlist_array)
     browse_playlists.exposed=True
@@ -1413,7 +1413,7 @@ class WebInterface(object):
 
     def search(self, term=None, plot=None, media_type=None, playlist_name=None):
         term, artists, albums, songs, movies, mvideos, series, episodes, plot = backend.global_search(term, plot, media_type, playlist_name)
-        
+
         return serve_template(templatename="search.html", title="Global Search", term=term, artists=artists, albums=albums, songs=songs,
             movies=movies, mvideos=mvideos, series=series, episodes=episodes, plot=plot)
     search.exposed=True
