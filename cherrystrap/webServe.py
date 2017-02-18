@@ -409,9 +409,15 @@ class WebInterface(object):
                     albumName = album['strAlbum']
                     albumYear = album['iYear']
                     albumGenre = album['strGenres']
-                    albuminfo = myDB.select("SELECT iRating FROM %s WHERE idAlbum = %s" % (table['albuminfo'], albumID))
+                    if cherrystrap.XBMC_VERSION=="Krypton":
+                        albuminfo = myDB.select("SELECT fRating FROM %s WHERE idAlbum = %s" % (table['albuminfo'], albumID))
+                    else:
+                        albuminfo = myDB.select("SELECT iRating FROM %s WHERE idAlbum = %s" % (table['albuminfo'], albumID))
                     for item in albuminfo:
-                        albumRating = item['iRating']
+                        if cherrystrap.XBMC_VERSION=="Krypton":
+                            albumRating = item['fRating']
+                        else:
+                            albumRating = item['iRating']
 
                     albumInfo.append({
                         'artistID': artistID,
@@ -711,7 +717,10 @@ class WebInterface(object):
             for artist in get_artistID:
                 artistID = artist['idArtist']
 
-        album_information2 = myDB.select("SELECT idAlbum, strMoods, strStyles, strThemes, strReview, strLabel, iRating FROM %s WHERE idAlbum = %s" % (table['albuminfo'], albumID))
+        if cherrystrap.XBMC_VERSION=="Krypton":
+            album_information2 = myDB.select("SELECT idAlbum, strMoods, strStyles, strThemes, strReview, strLabel, fRating FROM %s WHERE idAlbum = %s" % (table['albuminfo'], albumID))
+        else:
+            album_information2 = myDB.select("SELECT idAlbum, strMoods, strStyles, strThemes, strReview, strLabel, iRating FROM %s WHERE idAlbum = %s" % (table['albuminfo'], albumID))
         if album_information2:
             for info in album_information2:
                 albumMoods = info['strMoods']
@@ -719,10 +728,13 @@ class WebInterface(object):
                 albumThemes = info['strThemes']
                 albumReview = info['strReview']
                 albumLabel = info['strLabel']
-                albumRating = info['iRating']
+                if cherrystrap.XBMC_VERSION=="Krypton":
+                    albumRating = info['fRating']
+                else:
+                    albumRating = info['iRating']
 
                 songInfo=[]
-                song_information = myDB.select("SELECT idAlbum, iTrack, strTitle, iDuration FROM %s WHERE idAlbum = %s ORDER BY iTrack" % (table['song'], albumID))
+                song_information = myDB.select("SELECT idAlbum, iTrack, strTitle, iDuration FROM %s WHERE idAlbum = %s ORDER BY ABS(iTrack)" % (table['song'], albumID))
                 if song_information:
                     albumDuration = 0
                     for item in song_information:
@@ -1010,7 +1022,7 @@ class WebInterface(object):
 
         seasonList=[]
         if not seasonID:
-            seasons = myDB.select("SELECT idSeason, idShow, season, episodes, playCount FROM %s WHERE idShow = %s ORDER BY season ASC" % (table['seasonview'], tvshowID))
+            seasons = myDB.select("SELECT idSeason, idShow, season, episodes, playCount FROM %s WHERE idShow = %s ORDER BY ABS(season) ASC" % (table['seasonview'], tvshowID))
             if seasons:
                 for season in seasons:
                     seasonID_value = season['idSeason']
@@ -1054,7 +1066,7 @@ class WebInterface(object):
 
             seasonThumb, seasonBanner, seasonPoster, seasonFan = formatter.get_image_locations(seasonID, poster_url=poster_url)
 
-            episodes = myDB.select("SELECT idEpisode, idSeason, c00, c01, c03, c05, c12, c13 FROM %s WHERE idSeason = %s ORDER BY c13 ASC" % (table['episodeview'], seasonID))
+            episodes = myDB.select("SELECT idEpisode, idSeason, c00, c01, c03, c05, c12, c13 FROM %s WHERE idSeason = %s ORDER BY ABS(c13) ASC" % (table['episodeview'], seasonID))
             if episodes:
                 for episode in episodes:
                     episodeID = episode['idEpisode']

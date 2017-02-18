@@ -48,7 +48,7 @@ def import_XML(full_url, source, plaintext, media_type):
     xml_file.close()
     xml_root = etree.fromstring(xml_data)
     item = xml_root.findall('channel/item')
-    
+
     if source=="Billboard":
         for entry in item:
             pubDate = entry.findtext('pubDate')
@@ -67,7 +67,7 @@ def import_XML(full_url, source, plaintext, media_type):
             myDB.action("INSERT INTO billboard_music_releases (billboard_nr_genre, billboard_nr_artist, \
                 billboard_nr_album, billboard_nr_rank, billboard_nr_link, billboard_nr_release, billboard_nr_timestamp) \
                 VALUES (?, ?, ?, ?, ?, ?, ?)", (plaintext, artist, album, rank, link, media_type, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-        
+
     elif source=="Rotten Tomatoes":
         for entry in item:
             pubDate = entry.findtext('pubDate')
@@ -100,7 +100,7 @@ def match_playlist(source, media_type):
         need_artists = []
         have_albums = []
         need_albums = []
-        
+
         yes_artists = []
         yes_albums = []
         no_artists = []
@@ -184,7 +184,7 @@ def match_playlist(source, media_type):
     elif source=="Rotten Tomatoes":
         need_artists = []
         have_albums = []
-        need_albums = [] 
+        need_albums = []
 
         yes_albums = []
         no_albums = []
@@ -236,7 +236,7 @@ def save_playlist(playlist_name):
             os.makedirs(PLDIR)
         except OSError:
             logger.error('Could not create playlist directory. Check permissions of: ' + cherrystrap.DATADIR)
-    
+
     filename = datetime.datetime.now().strftime('%Y-%m-%d')+" - "+playlist_name
     xbmc_playlist = os.path.join(cherrystrap.DATADIR, 'playlists', filename+'_XBMC.m3u')
     win_playlist = os.path.join(cherrystrap.DATADIR, 'playlists', filename+'_Win.m3u')
@@ -301,14 +301,14 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                         thumb_url = image['url']
                     elif image['type'] == 'fanart':
                         fanart_url = image['url']
-                
+
                 artistThumb, artistBanner, artistPoster, artistFan = formatter.get_image_locations(artistID, thumb_url=thumb_url, fanart_url=fanart_url)
                 artists.append({
                     'artistID': artistID,
                     'artistName': artistName,
                     'artistThumb': artistThumb
                     })
-    
+
     if (not media_type) or (media_type=="albums"):
         album_query = MySQLDB.select("SELECT idAlbum, strAlbum, strArtists FROM %s WHERE strAlbum LIKE '%s'" % (table['album'], '%'+termSafe+'%'))
         if album_query:
@@ -320,7 +320,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                 for image in imageUrls:
                     if image['type'] == 'thumb':
                         thumb_url = image['url']
-                
+
                 albumThumb, albumBanner, albumPoster, albumFan = formatter.get_image_locations(albumID, thumb_url=thumb_url)
                 albums.append({
                     'albumID': albumID,
@@ -341,7 +341,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                 for image in imageUrls:
                     if image['type'] == 'thumb':
                         thumb_url = image['url']
-                
+
                 songThumb, songBanner, songPoster, songFan = formatter.get_image_locations(songID, thumb_url=thumb_url)
                 songs.append({
                     'songID': songID,
@@ -364,7 +364,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                         poster_url = image['url']
                     elif image['type'] == 'fanart':
                         fanart_url = image['url']
-                
+
                 movieThumb, movieBanner, moviePoster, movieFan = formatter.get_image_locations(movieID, poster_url=poster_url, fanart_url=fanart_url)
                 movies.append({
                     'movieID': movieID,
@@ -387,8 +387,8 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                         banner_url = image['url']
                     elif image['type'] == 'fanart':
                         fanart_url = image['url']
-                
-                seriesThumb, seriesBanner, seriesPoster, seriesFan = formatter.get_image_locations(movieID, poster_url=poster_url, banner_url=banner_url, fanart_url=fanart_url)
+
+                seriesThumb, seriesBanner, seriesPoster, seriesFan = formatter.get_image_locations(showID, poster_url=poster_url, banner_url=banner_url, fanart_url=fanart_url)
                 series.append({
                     'showID': showID,
                     'showName': showName,
@@ -407,7 +407,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                 for image in imageUrls:
                     if image['type'] == 'thumb':
                         thumb_url = image['url']
-                
+
                 episodeThumb, episodeBanner, episodePoster, episodeFan = formatter.get_image_locations(episodeID, thumb_url=thumb_url)
                 episodes.append({
                     'episodeID': episodeID,
@@ -429,7 +429,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                 for image in imageUrls:
                     if image['type'] == 'thumb':
                         thumb_url = image['url']
-                
+
                 mvideoThumb, mvideoBanner, mvideoPoster, mvideoFan = formatter.get_image_locations(mvideoID, thumb_url=thumb_url)
                 mvideos.append({
                     'mvideoID': mvideoID,
@@ -449,7 +449,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                 for image in imageUrls:
                     if image['type'] == 'thumb':
                         thumb_url = image['url']
-                
+
                 mvideoThumb, mvideoBanner, mvideoPoster, mvideoFan = formatter.get_image_locations(mvideoID, thumb_url=thumb_url)
                 mvideos.append({
                     'mvideoID': mvideoID,
@@ -473,7 +473,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                             poster_url = image['url']
                         elif image['type'] == 'fanart':
                             fanart_url = image['url']
-                    
+
                     movieThumb, movieBanner, moviePoster, movieFan = formatter.get_image_locations(movieID, poster_url=poster_url, fanart_url=fanart_url)
                     movies.append({
                         'movieID': movieID,
@@ -493,7 +493,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                             poster_url = image['url']
                         elif image['type'] == 'fanart':
                             fanart_url = image['url']
-                    
+
                     movieThumb, movieBanner, moviePoster, movieFan = formatter.get_image_locations(movieID, poster_url=poster_url, fanart_url=fanart_url)
                     movies.append({
                         'movieID': movieID,
@@ -513,7 +513,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                             poster_url = image['url']
                         elif image['type'] == 'fanart':
                             fanart_url = image['url']
-                    
+
                     movieThumb, movieBanner, moviePoster, movieFan = formatter.get_image_locations(movieID, poster_url=poster_url, fanart_url=fanart_url)
                     movies.append({
                         'movieID': movieID,
@@ -534,7 +534,7 @@ def global_search(term=None, plot=None, media_type=None, playlist_name=None):
                     for image in imageUrls:
                         if image['type'] == 'thumb':
                             thumb_url = image['url']
-                    
+
                     episodeThumb, episodeBanner, episodePoster, episodeFan = formatter.get_image_locations(episodeID, thumb_url=thumb_url)
                     episodes.append({
                         'episodeID': episodeID,
